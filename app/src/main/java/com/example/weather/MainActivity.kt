@@ -31,6 +31,7 @@ import android.appwidget.AppWidgetManager
 import android.graphics.Paint
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
+import android.net.Uri
 
 class MainActivity : AppCompatActivity() {
 
@@ -64,9 +65,10 @@ class MainActivity : AppCompatActivity() {
 //            intent.putExtra("number", "" + binding.test.text)
 //            sendBroadcast(intent)
 //        }
-        var content: SpannableString = SpannableString(binding.tempCategory.text.toString())
-        content.setSpan(UnderlineSpan(), 0, content.length, 0)
-        binding.tempCategory.text = content
+
+//        var content: SpannableString = SpannableString(binding.tempCategory.text.toString())
+//        content.setSpan(UnderlineSpan(), 0, content.length, 0)
+//        binding.tempCategory.text = content
 
         binding.hourRecyclerView.run {
             adapter = hourlyWeatherAdapter
@@ -94,11 +96,11 @@ class MainActivity : AppCompatActivity() {
             else {
                 location = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
 
-//                var latitude = location.latitude
-//                var longitude = location.longitude
+                var latitude = location.latitude
+                var longitude = location.longitude
 
-                var latitude = 37.5010881
-                var longitude = 127.0342169
+//                var latitude = 37.5010881
+//                var longitude = 127.0342169
 
                 var geocoder = Geocoder(applicationContext)
                 geocoder.getFromLocation(latitude,
@@ -108,8 +110,11 @@ class MainActivity : AppCompatActivity() {
                         geocoder.getFromLocation(latitude,
                             longitude, 1)[0].getAddressLine(0))
 
+
 //                var longitude = 128.568975
 //                var latitude = 35.8438071
+
+
 
                 WeatherService!!.getWeather(latitude, longitude, Utils.API_KEY).enqueue(object : Callback<Weather> {
                     override fun onFailure(call: Call<Weather>, t: Throwable) {
@@ -121,9 +126,23 @@ class MainActivity : AppCompatActivity() {
                         + " " + response.body()!!.weather[0].description + " " + response.body()!!.sys.country + " " + response.body()!!.name
                         + "\n" + response.body())
 
-                        binding.place.text = response.body()!!.sys.country + " " + response.body()!!.name
-                        binding.weather.text = response.body()!!.weather[0].description
+                        var array = geocoder.getFromLocation(latitude,
+                            longitude, 1)[0].getAddressLine(0).split(" ")
+
+                        binding.place.text = (geocoder.getFromLocation(latitude, longitude, 1)[0].adminArea) + " " + array[2] + " " +
+                                geocoder.getFromLocation(latitude, longitude, 1)[0].thoroughfare
+                        if (response.body()!!.weather[0].main == "Clouds") {
+                            binding.weather.text = "구름 조금"
+                        }
+                        else if (response.body()!!.weather[0].main == "Clear") {
+                            binding.weather.text = "맑음"
+                        }
+                        else if (response.body()!!.weather[0].main == "Rain") {
+                            binding.weather.text = "비"
+                        }
                         binding.temp.text = (response.body()!!.main.temp - 273.15).toInt().toString() + "℃"
+                        var uri = Uri.parse(Utils.iconURL + response.body()!!.weather[0].icon + ".png")
+                        binding.weatherIcon.setImageURI(uri)
 
                         sunrise = Date(response.body()!!.sys.sunrise.toLong() * 1000)
                         sunset = Date(response.body()!!.sys.sunset.toLong() * 1000)
@@ -185,7 +204,7 @@ class MainActivity : AppCompatActivity() {
                                     }
                                 }
 
-                                hourlyWeatherList.add(Hour(dateFormat!!, "", (response.body()!!.hourly[i].temp
+                                hourlyWeatherList.add(Hour(dateFormat!!, Utils.iconURL + response.body()!!.hourly[i].weather[0].icon + ".png", (response.body()!!.hourly[i].temp
                                         - 273.15).toInt().toString() + "℃"))
                             }
 
@@ -228,6 +247,163 @@ class MainActivity : AppCompatActivity() {
                         }
 
                     })
+
+                binding.tempFeelsCategory.setOnClickListener {
+                    var content: SpannableString = SpannableString(binding.tempFeelsCategory.text.toString())
+                    content.setSpan(UnderlineSpan(), 0, content.length, 0)
+                    binding.tempFeelsCategory.text = content
+
+                    WeatherService.getWeatherTime(latitude, longitude, "current,minutely,daily", Utils.API_KEY)
+                        .enqueue(object : Callback<HourlyWeather>{
+                            override fun onFailure(call: Call<HourlyWeather>, t: Throwable) {
+
+                            }
+
+                            override fun onResponse(
+                                call: Call<HourlyWeather>,
+                                response: Response<HourlyWeather>
+                            ) {
+                                Log.i("feel", "" + response.body())
+                                hourlyWeatherList.clear()
+                                for (i in response.body()!!.hourly.indices) {
+                                    date = Date(response.body()!!.hourly[i].dt.toLong() * 1000)
+                                    cal.time = date
+                                    var hours = cal.get(Calendar.HOUR_OF_DAY)
+                                    if (hours >= 12) {
+                                        dateFormat = SimpleDateFormat("오후 KK시").format(date)
+                                        if (dateFormat!!.contains("00")) {
+                                            dateFormat = "오후 12시"
+                                        }
+                                        if (dateFormat!!.contains("10")) {
+
+                                        }
+                                        else {
+                                            dateFormat = dateFormat!!.replace("0", "")
+                                        }
+
+                                    }
+                                    else {
+                                        dateFormat = SimpleDateFormat("오전 hh시").format(date)
+                                        if (dateFormat!!.contains("10")) {
+
+                                        }
+                                        else {
+                                            dateFormat = dateFormat!!.replace("0", "")
+                                        }
+                                    }
+
+                                    hourlyWeatherList.add(Hour(dateFormat!!,
+                                        Utils.iconURL + response.body()!!.hourly[i].weather[0].icon + ".png",
+                                        (response.body()!!.hourly[i].feels_like - 273.15).toInt().toString() + "℃"))
+                                }
+                                hourlyWeatherAdapter.setItem(hourlyWeatherList)
+                            }
+                        })
+                }
+
+                binding.tempCategory.setOnClickListener {
+                    var content: SpannableString = SpannableString(binding.tempFeelsCategory.text.toString())
+                    content.setSpan(UnderlineSpan(), 0, content.length, 0)
+                    binding.tempFeelsCategory.text = content
+
+                    WeatherService.getWeatherTime(latitude, longitude, "current,minutely,daily", Utils.API_KEY)
+                        .enqueue(object : Callback<HourlyWeather>{
+                            override fun onFailure(call: Call<HourlyWeather>, t: Throwable) {
+
+                            }
+
+                            override fun onResponse(
+                                call: Call<HourlyWeather>,
+                                response: Response<HourlyWeather>
+                            ) {
+                                Log.i("feel", "" + response.body())
+                                hourlyWeatherList.clear()
+                                for (i in response.body()!!.hourly.indices) {
+                                    date = Date(response.body()!!.hourly[i].dt.toLong() * 1000)
+                                    cal.time = date
+                                    var hours = cal.get(Calendar.HOUR_OF_DAY)
+                                    if (hours >= 12) {
+                                        dateFormat = SimpleDateFormat("오후 KK시").format(date)
+                                        if (dateFormat!!.contains("00")) {
+                                            dateFormat = "오후 12시"
+                                        }
+                                        if (dateFormat!!.contains("10")) {
+
+                                        }
+                                        else {
+                                            dateFormat = dateFormat!!.replace("0", "")
+                                        }
+
+                                    }
+                                    else {
+                                        dateFormat = SimpleDateFormat("오전 hh시").format(date)
+                                        if (dateFormat!!.contains("10")) {
+
+                                        }
+                                        else {
+                                            dateFormat = dateFormat!!.replace("0", "")
+                                        }
+                                    }
+
+                                    hourlyWeatherList.add(Hour(dateFormat!!,
+                                        Utils.iconURL + response.body()!!.hourly[i].weather[0].icon + ".png",
+                                        (response.body()!!.hourly[i].temp - 273.15).toInt().toString() + "℃"))
+                                }
+                                hourlyWeatherAdapter.setItem(hourlyWeatherList)
+                            }
+                        })
+                }
+
+                binding.humidityCategory.setOnClickListener {
+                    var content: SpannableString = SpannableString(binding.tempFeelsCategory.text.toString())
+                    content.setSpan(UnderlineSpan(), 0, content.length, 0)
+                    binding.tempFeelsCategory.text = content
+
+                    WeatherService.getWeatherTime(latitude, longitude, "current,minutely,daily", Utils.API_KEY)
+                        .enqueue(object : Callback<HourlyWeather>{
+                            override fun onFailure(call: Call<HourlyWeather>, t: Throwable) {
+
+                            }
+
+                            override fun onResponse(
+                                call: Call<HourlyWeather>,
+                                response: Response<HourlyWeather>
+                            ) {
+                                Log.i("feel", "" + response.body())
+                                hourlyWeatherList.clear()
+                                for (i in response.body()!!.hourly.indices) {
+                                    date = Date(response.body()!!.hourly[i].dt.toLong() * 1000)
+                                    cal.time = date
+                                    var hours = cal.get(Calendar.HOUR_OF_DAY)
+                                    if (hours >= 12) {
+                                        dateFormat = SimpleDateFormat("오후 KK시").format(date)
+                                        if (dateFormat!!.contains("00")) {
+                                            dateFormat = "오후 12시"
+                                        }
+                                        if (dateFormat!!.contains("10")) {
+
+                                        }
+                                        else {
+                                            dateFormat = dateFormat!!.replace("0", "")
+                                        }
+
+                                    }
+                                    else {
+                                        dateFormat = SimpleDateFormat("오전 hh시").format(date)
+                                        if (dateFormat!!.contains("10")) {
+
+                                        }
+                                        else {
+                                            dateFormat = dateFormat!!.replace("0", "")
+                                        }
+                                    }
+
+                                    hourlyWeatherList.add(Hour(dateFormat!!, "", (response.body()!!.hourly[i].humidity.toString() + "%")))
+                                }
+                                hourlyWeatherAdapter.setItem(hourlyWeatherList)
+                            }
+                        })
+                }
             }
 
             //var latitude = location.latitude

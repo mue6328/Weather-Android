@@ -19,6 +19,7 @@ class MyRemoteViews : RemoteViewsService.RemoteViewsFactory {
     private fun setData() {
         list.add(Hour("3시", "", ""))
         list.add(Hour("6시", "", ""))
+        list.add(Hour("9시", "", ""))
     }
 
     override fun onCreate() {
@@ -34,7 +35,7 @@ class MyRemoteViews : RemoteViewsService.RemoteViewsFactory {
     }
 
     override fun onDataSetChanged() {
-        setData()
+       // setData()
     }
 
     override fun hasStableIds(): Boolean {
@@ -42,16 +43,16 @@ class MyRemoteViews : RemoteViewsService.RemoteViewsFactory {
     }
 
     override fun getViewAt(position: Int): RemoteViews {
-        var recyclerViewWidget = RemoteViews(context.packageName, R.layout.hourly_weather_item)
-        recyclerViewWidget.setTextViewText(R.id.timeHourly, list[position].time)
-        recyclerViewWidget.setTextViewText(R.id.iconHourly, list[position].icon)
-        recyclerViewWidget.setTextViewText(R.id.tempHourly, list[position].temp)
+        var recyclerViewWidget = RemoteViews(context.packageName, R.layout.hourly_weather_item2)
+        recyclerViewWidget.setTextViewText(R.id.timeHourly2, list[position].time)
+//        recyclerViewWidget.setTextViewText(R.id.iconHourly2, list[position].icon)
+//        recyclerViewWidget.setTextViewText(R.id.tempHourly2, list[position].temp)
 
         var intent = Intent()
         intent.putExtra("time", list[position].time)
         intent.putExtra("icon", list[position].icon)
         intent.putExtra("temp", list[position].temp)
-        recyclerViewWidget.setOnClickFillInIntent(R.id.timeHourly, intent)
+        recyclerViewWidget.setOnClickFillInIntent(R.id.timeHourly2, intent)
 
         return recyclerViewWidget
     }

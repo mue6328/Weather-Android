@@ -3,12 +3,10 @@ package com.example.weather
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.appwidget.AppWidgetManager
-import kotlinx.android.synthetic.main.activiy_setting.*
 import android.widget.RemoteViews
 import com.example.weather.databinding.ActiviySettingBinding
 import android.content.Intent
 import android.app.Activity
-import android.widget.Button
 
 class SettingActivity: AppCompatActivity() {
     //var binding: Activity
@@ -33,7 +31,7 @@ class SettingActivity: AppCompatActivity() {
     private fun setUi() {
         binding.change.setOnClickListener {
             val widgetManager = AppWidgetManager.getInstance(this)
-            val remoteView = RemoteViews(packageName, R.layout.text_widget)
+            val remoteView = RemoteViews(packageName, R.layout.listview_widget)
             //remoteView.setTextViewText(R.id.testText, "QQQ")
             widgetManager?.updateAppWidget(widgetid!!, remoteView)
 

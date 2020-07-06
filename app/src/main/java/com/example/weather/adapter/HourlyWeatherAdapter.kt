@@ -13,6 +13,7 @@ import android.content.DialogInterface
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.bumptech.glide.Glide
 import com.example.weather.Model.Hour
 import com.example.weather.databinding.HourlyWeatherItemBinding
 import java.util.*
@@ -38,6 +39,10 @@ class HourlyWeatherAdapter : RecyclerView.Adapter<HourlyWeatherAdapter.Holder>()
     override fun onBindViewHolder(holder: Holder, position: Int) {
         holder.binding.timeHourly.text = hourlyWeather[position].time
         //holder.binding.icon
+        Glide.with(holder.itemView.context)
+            .load(hourlyWeather[position].icon)
+            .into(holder.binding.iconHourly)
+
         holder.binding.tempHourly.text = hourlyWeather[position].temp
     }
 

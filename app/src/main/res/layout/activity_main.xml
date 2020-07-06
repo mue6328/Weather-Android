@@ -112,16 +112,52 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/tempCategory"
+                android:id="@+id/tempFeelsCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="온도"
+                android:text="체감"
                 android:textColor="#FFFFFF"
                 android:layout_marginEnd="8dp"
                 android:clickable="true"
                 android:textSize="14sp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toStartOf="@id/humidityCategory"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tempCategory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:text="온도"
+                android:layout_marginEnd="8dp"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toStartOf="@+id/tempFeelsCategory"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/humidityCategory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:text="습도"
+                android:layout_marginEnd="8dp"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+<!--            <TextView-->
+<!--                android:id="@+id/tempCategorya"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="온도"-->
+<!--                android:textColor="#FFFFFF"-->
+<!--                android:layout_marginEnd="8dp"-->
+<!--                android:clickable="true"-->
+<!--                android:textSize="14sp"-->
+<!--                app:layout_constraintTop_toTopOf="parent"-->
+<!--                app:layout_constraintEnd_toEndOf="parent" />-->
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

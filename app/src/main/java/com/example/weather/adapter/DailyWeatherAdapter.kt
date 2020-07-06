@@ -45,7 +45,15 @@ class DailyWeatherAdapter : RecyclerView.Adapter<DailyWeatherAdapter.Holder>() {
             .load(dailyWeather[position].icon)
             .into(holder.binding.icon)
 
-        holder.binding.weatherInfo.text = dailyWeather[position].weatherInfo
+        if (dailyWeather[position].weatherInfo == "Clouds") {
+            holder.binding.weatherInfo.text = "구름 조금"
+        }
+        else if (dailyWeather[position].weatherInfo == "Clear") {
+            holder.binding.weatherInfo.text = "맑음"
+        }
+        else if (dailyWeather[position].weatherInfo == "Rain") {
+            holder.binding.weatherInfo.text = "비"
+        }
         holder.binding.tempMin.text = dailyWeather[position].min + "℃"
         holder.binding.tempMax.text = dailyWeather[position].max + "℃"
     }
