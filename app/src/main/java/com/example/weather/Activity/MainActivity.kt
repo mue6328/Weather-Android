@@ -13,7 +13,6 @@ import android.text.style.UnderlineSpan
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.TimePicker
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -30,7 +29,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.collections.ArrayList
 import android.widget.Toast
 import android.app.PendingIntent
@@ -41,13 +39,7 @@ import com.example.weather.R
 import com.example.weather.Receiver.AlarmReceiver
 import com.example.weather.Receiver.DeviceBootReceiver
 import com.example.weather.Utils
-import android.content.SharedPreferences;
-import android.view.View;
-import android.widget.Button;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Locale;
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -70,12 +62,15 @@ class MainActivity : AppCompatActivity() {
         var dailyWeatherList = ArrayList<Day>()
 
         var date: Date? = null
-        var sunrise: Date? = null
-        var sunset: Date? = null
+        var sunrise: Date
+        var sunset: Date
         var dateFormat: String? = null
         var sunriseFormat: String? = null
         var sunsetFormat: String? = null
         var cal = Calendar.getInstance()
+
+//        var dd = intent.extras
+//        Log.d("ddd", dd!!.getString("ddd"))
 
 
 //        binding.change.setOnClickListener {
@@ -115,13 +110,16 @@ class MainActivity : AppCompatActivity() {
             else {
                 location = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
 
-//                var latitude = location.latitude
-//                var longitude = location.longitude
+                var latitude = location.latitude
+                var longitude = location.longitude
 
-                var latitude = 37.5010881
-                var longitude = 127.0342169
+//                var latitude = 37.5010881
+//                var longitude = 127.0342169
 
-                var geocoder = Geocoder(applicationContext)
+//                var longitude = 128.568975
+//                var latitude = 35.8438071
+
+                var geocoder = Geocoder(applicationContext, Locale.KOREA)
                 geocoder.getFromLocation(latitude,
                 longitude, 1)[0].getAddressLine(0)
                 Log.i("TAG", "" + geocoder.getFromLocation(latitude,
@@ -130,8 +128,7 @@ class MainActivity : AppCompatActivity() {
                             longitude, 1)[0].getAddressLine(0))
 
 
-//                var longitude = 128.568975
-//                var latitude = 35.8438071
+
 
 
 
@@ -154,22 +151,6 @@ class MainActivity : AppCompatActivity() {
                                 geocoder.getFromLocation(latitude, longitude, 1)[0].thoroughfare
                         Log.i("weatherInfo", "" + response.body()!!.weather[0].main
                         + "")
-                        if (response.body()!!.weather[0].main == "Clouds") {
-                            binding.weather.text = "구름 조금"
-                            binding.weatherIcon.setImageResource(R.drawable.ic_wb_cloudy_black_24dp)
-                        }
-                        else if (response.body()!!.weather[0].main == "Clear") {
-                            binding.weather.text = "맑음"
-                            binding.weatherIcon.setImageResource(R.drawable.ic_wb_sunny_black_24dp)
-                        }
-                        else if (response.body()!!.weather[0].main == "Rain") {
-                            binding.weather.text = "비"
-                            binding.weatherIcon.setImageResource(R.drawable.rain2)
-                        }
-                        else if (response.body()!!.weather[0].main == "Haze") {
-                            binding.weather.text = "안개"
-                            binding.weatherIcon.setImageResource(R.drawable.haze)
-                        }
                         binding.temp.text = (response.body()!!.main.temp - 273.15).toInt().toString() + "℃"
 
                         //var uri = Uri.parse(Utils.iconURL + response.body()!!.weather[0].icon + ".png")
@@ -179,11 +160,28 @@ class MainActivity : AppCompatActivity() {
                         sunset = Date(response.body()!!.sys.sunset.toLong() * 1000)
 //                        cal.time = sunri
 //                        var hours = cal.get(Calendar.HOUR_OF_DAY)
+//                        var sunriseFormatCheck: String
+//                        var sunsetFormatCheck: String
+
                         sunriseFormat = SimpleDateFormat("오전 hh:mm").format(sunrise)
                         sunsetFormat = SimpleDateFormat("오후 KK:mm").format(sunset)
 
-                        sunriseFormat = sunriseFormat!!.replace("0", "")
-                        sunsetFormat = sunsetFormat!!.replace("0", "")
+//                        sunriseFormatCheck = SimpleDateFormat("mm").format(sunrise)
+//                        sunsetFormatCheck = SimpleDateFormat("mm").format(sunset)
+
+//                        if (sunriseFormatCheck.toInt() % 10 == 0) {
+//
+//                        }
+//                        else if (sunriseFormatCheck.toInt() % 10 != 0) {
+//                            sunriseFormat = sunriseFormat!!.replace("0", "")
+//                        }
+//
+//                        if (sunsetFormatCheck.toInt() % 10 == 0) {
+//
+//                        }
+//                        else if (sunsetFormatCheck.toInt() % 10 != 0){
+//                            sunsetFormat = sunsetFormat!!.replace("0", "")
+//                        }
 
                         binding.sunriseTime.text = sunriseFormat
                         binding.sunsetTime.text = sunsetFormat
@@ -208,6 +206,23 @@ class MainActivity : AppCompatActivity() {
                             Log.i("hourly", "" + response.body()!!.hourly[0].dt)
                             binding.tempMin.text = "최저 " + (response.body()!!.daily[0].temp.min - 273.15).toInt() + "℃ / "
                             binding.tempMax.text = "최고 " + (response.body()!!.daily[0].temp.max - 273.15).toInt() + "℃"
+
+                            if (response.body()!!.hourly[0].weather[0].main == "Clouds") {
+                                binding.weather.text = "구름 조금"
+                                binding.weatherIcon.setImageResource(R.drawable.ic_wb_cloudy_black_24dp)
+                            }
+                            else if (response.body()!!.hourly[0].weather[0].main == "Clear") {
+                                binding.weather.text = "맑음"
+                                binding.weatherIcon.setImageResource(R.drawable.ic_wb_sunny_black_24dp)
+                            }
+                            else if (response.body()!!.hourly[0].weather[0].main == "Rain") {
+                                binding.weather.text = "비"
+                                binding.weatherIcon.setImageResource(R.drawable.rain)
+                            }
+                            else if (response.body()!!.hourly[0].weather[0].main == "Haze") {
+                                binding.weather.text = "안개"
+                                binding.weatherIcon.setImageResource(R.drawable.haze)
+                            }
 
 
                             for (i in response.body()!!.hourly.indices) {
@@ -237,7 +252,7 @@ class MainActivity : AppCompatActivity() {
                                     }
                                 }
 
-                                hourlyWeatherList.add(Hour(dateFormat!!, Utils.iconURL + response.body()!!.hourly[i].weather[0].icon + ".png", (response.body()!!.hourly[i].temp
+                                hourlyWeatherList.add(Hour(dateFormat!!, response.body()!!.hourly[i].weather[0].main, (response.body()!!.hourly[i].temp
                                         - 273.15).toInt().toString() + "℃"))
                             }
 
@@ -269,8 +284,7 @@ class MainActivity : AppCompatActivity() {
                                     korDayOfWeek = "토"
                                 }
                                 dailyWeatherList.add(Day(korDayOfWeek, dateFormat!!,
-                                    Utils.iconURL +
-                                    response.body()!!.daily[i].weather[0].icon + ".png",
+                                    response.body()!!.daily[i].weather[0].main,
                                     response.body()!!.daily[i].weather[0].main,
                                     (response.body()!!.daily[i].temp.min - 273.15).toInt().toString(),
                                     (response.body()!!.daily[i].temp.max - 273.15).toInt().toString()))
@@ -283,10 +297,6 @@ class MainActivity : AppCompatActivity() {
                     })
 
                 binding.tempFeelsCategory.setOnClickListener {
-                    var content: SpannableString = SpannableString(binding.tempFeelsCategory.text.toString())
-                    content.setSpan(UnderlineSpan(), 0, content.length, 0)
-                    binding.tempFeelsCategory.text = content
-
                     WeatherService.getWeatherTime(latitude, longitude, "current,minutely,daily",
                         Utils.API_KEY
                     )
@@ -329,7 +339,7 @@ class MainActivity : AppCompatActivity() {
                                     }
 
                                     hourlyWeatherList.add(Hour(dateFormat!!,
-                                        Utils.iconURL + response.body()!!.hourly[i].weather[0].icon + ".png",
+                                        response.body()!!.hourly[i].weather[0].main,
                                         (response.body()!!.hourly[i].feels_like - 273.15).toInt().toString() + "℃"))
                                 }
                                 hourlyWeatherAdapter.setItem(hourlyWeatherList)
@@ -338,10 +348,6 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 binding.tempCategory.setOnClickListener {
-                    var content: SpannableString = SpannableString(binding.tempFeelsCategory.text.toString())
-                    content.setSpan(UnderlineSpan(), 0, content.length, 0)
-                    binding.tempFeelsCategory.text = content
-
                     WeatherService.getWeatherTime(latitude, longitude, "current,minutely,daily",
                         Utils.API_KEY
                     )
@@ -384,7 +390,7 @@ class MainActivity : AppCompatActivity() {
                                     }
 
                                     hourlyWeatherList.add(Hour(dateFormat!!,
-                                        Utils.iconURL + response.body()!!.hourly[i].weather[0].icon + ".png",
+                                        response.body()!!.hourly[i].weather[0].main,
                                         (response.body()!!.hourly[i].temp - 273.15).toInt().toString() + "℃"))
                                 }
                                 hourlyWeatherAdapter.setItem(hourlyWeatherList)
@@ -393,10 +399,6 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 binding.humidityCategory.setOnClickListener {
-                    var content: SpannableString = SpannableString(binding.tempFeelsCategory.text.toString())
-                    content.setSpan(UnderlineSpan(), 0, content.length, 0)
-                    binding.tempFeelsCategory.text = content
-
                     WeatherService.getWeatherTime(latitude, longitude, "current,minutely,daily",
                         Utils.API_KEY
                     )
@@ -438,16 +440,13 @@ class MainActivity : AppCompatActivity() {
                                         }
                                     }
 
-                                    hourlyWeatherList.add(Hour(dateFormat!!, "", (response.body()!!.hourly[i].humidity.toString() + "%")))
+                                    hourlyWeatherList.add(Hour(dateFormat!!, "Humidity", (response.body()!!.hourly[i].humidity.toString() + "%")))
                                 }
                                 hourlyWeatherAdapter.setItem(hourlyWeatherList)
                             }
                         })
                 }
             }
-
-            //var latitude = location.latitude
-            //var longitude = location.longitude
 
 
         } catch (e: SecurityException) {
@@ -486,7 +485,7 @@ class MainActivity : AppCompatActivity() {
                     var hour: Int
                     var minute = timePicker.minute
                     if (timePicker.hour > 12) {
-                        hour = timePicker.hour - 12
+                        hour = timePicker.hour
                     }
                     else {
                         hour = timePicker.hour
@@ -508,7 +507,15 @@ class MainActivity : AppCompatActivity() {
                     editor.putLong("nextNotifyTime", calendar.timeInMillis)
                     editor.apply()
 
-                    Toast.makeText(this, "" + hour + " " + minute, Toast.LENGTH_SHORT).show()
+                    if (hour > 12) {
+                        hour -= 12
+                        Toast.makeText(this, "알람이 오후 " + hour + "시 " + minute + "분으로 설정되었습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                    else {
+                        Toast.makeText(this, "알람이 오전 " + hour + "시 " + minute + "분으로 설정되었습니다.", Toast.LENGTH_SHORT).show()
+                    }
+
+
                     diaryNotification(calendar)
                 }, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), false)
                 dialog.setTitle("dd")
@@ -527,8 +534,12 @@ class MainActivity : AppCompatActivity() {
         var receiver = ComponentName(this, DeviceBootReceiver::class.java)
         var alarmIntent = Intent(this, AlarmReceiver::class.java)
         var pendingIntent = PendingIntent
-            .getBroadcast(this, 0, alarmIntent, 0)
+            .getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+
         var alarmManager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+
 
         if (dailyNotify) {
             if (alarmManager != null) {

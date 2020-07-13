@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
 import com.example.weather.Model.Hour
+import com.example.weather.R
 import com.example.weather.databinding.HourlyWeatherItemBinding
 import java.util.*
 import kotlin.collections.ArrayList
@@ -39,9 +40,25 @@ class HourlyWeatherAdapter : RecyclerView.Adapter<HourlyWeatherAdapter.Holder>()
     override fun onBindViewHolder(holder: Holder, position: Int) {
         holder.binding.timeHourly.text = hourlyWeather[position].time
         //holder.binding.icon
-        Glide.with(holder.itemView.context)
-            .load(hourlyWeather[position].icon)
-            .into(holder.binding.iconHourly)
+//        Glide.with(holder.itemView.context)
+//            .load(hourlyWeather[position].icon)
+//            .into(holder.binding.iconHourly)
+        if (hourlyWeather[position].icon == "Clear") {
+            holder.binding.iconHourly.setImageResource(R.drawable.ic_wb_sunny_black_24dp)
+        }
+        else if (hourlyWeather[position].icon == "Clouds") {
+            holder.binding.iconHourly.setImageResource(R.drawable.ic_wb_cloudy_black_24dp)
+        }
+        else if (hourlyWeather[position].icon == "Rain") {
+            holder.binding.iconHourly.setImageResource(R.drawable.rain)
+        }
+        else if (hourlyWeather[position].icon == "Haze") {
+            holder.binding.iconHourly.setImageResource(R.drawable.haze)
+        }
+        else if (hourlyWeather[position].icon == "Humidity") {
+            holder.binding.iconHourly.setBackgroundColor(Color.WHITE)
+            holder.binding.iconHourly.setImageResource(R.drawable.humidity)
+        }
 
         holder.binding.tempHourly.text = hourlyWeather[position].temp
     }

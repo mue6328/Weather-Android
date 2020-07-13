@@ -1,5 +1,7 @@
 package com.example.weather.adapter
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import android.content.Context
@@ -43,6 +45,7 @@ class MyRemoteViews : RemoteViewsService.RemoteViewsFactory {
 
     override fun getViewAt(position: Int): RemoteViews {
         var listViewWidget = RemoteViews(context.packageName, R.layout.hourly_weather_item2)
+        lateinit var icon : Bitmap
         //listViewWidget.set
         listViewWidget.setTextViewText(R.id.timeHourly2, list[position].time)
 
@@ -52,7 +55,21 @@ class MyRemoteViews : RemoteViewsService.RemoteViewsFactory {
 //            .into(icon)
 //        listViewWidget.setImageViewUri(R.id.iconHourly2, Uri.parse(list[position].icon))
 //        listViewWidget.setTextViewText(R.id.iconHourly2, list[position].icon)
-        listViewWidget.setTextViewText(R.id.test, "test")
+        //listViewWidget.setTextViewText(R.id.test, "test")
+        if (list[position].icon == "Clear") {
+            icon = BitmapFactory.decodeResource(context.resources, R.drawable.ic_wb_sunny_black_24dp)
+        }
+        else if (list[position].icon == "Clouds") {
+            icon = BitmapFactory.decodeResource(context.resources, R.drawable.ic_wb_cloudy_black_24dp)
+        }
+        else if (list[position].icon == "Rain") {
+            icon = BitmapFactory.decodeResource(context.resources, R.drawable.rain)
+        }
+        else if (list[position].icon == "Haze") {
+            icon = BitmapFactory.decodeResource(context.resources, R.drawable.haze)
+        }
+
+        listViewWidget.setImageViewBitmap(R.id.iconHourly2, icon)
         listViewWidget.setTextViewText(R.id.tempHourly2, list[position].temp)
 
         var intent = Intent()

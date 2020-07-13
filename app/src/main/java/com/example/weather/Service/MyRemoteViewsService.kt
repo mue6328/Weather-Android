@@ -47,11 +47,14 @@ class MyRemoteViewsService : RemoteViewsService() {
             else {
                 location = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
 
-                //var latitude = location.latitude
-                //var longitude = location.longitude
+                var latitude = location.latitude
+                var longitude = location.longitude
 
-                var latitude = 37.5010881
-                var longitude = 127.0342169
+//                var latitude = 37.5010881
+//                var longitude = 127.0342169
+
+//                var longitude = 128.568975
+//                var latitude = 35.8438071
 
                 WeatherService.getWeatherTime(
                     latitude,
@@ -94,7 +97,7 @@ class MyRemoteViewsService : RemoteViewsService() {
                                 }
 
                                 list.add(Hour(dateFormat!!,
-                                    "",
+                                    response.body()!!.hourly[i].weather[0].main,
                                     (response.body()!!.hourly[i].temp - 273.15).toInt().toString() + "℃"))
 
 //                        hourlyWeatherList.add(Hour(dateFormat!!,
