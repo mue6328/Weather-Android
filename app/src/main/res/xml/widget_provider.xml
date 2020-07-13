@@ -3,6 +3,7 @@
     android:initialKeyguardLayout="@layout/listview_widget"
     android:initialLayout="@layout/listview_widget"
     android:minWidth="220dp"
-    android:minHeight="50dp">
+    android:minHeight="50dp"
+    android:updatePeriodMillis="86400">
 
 </appwidget-provider>
