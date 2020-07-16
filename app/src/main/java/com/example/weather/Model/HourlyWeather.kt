@@ -1,5 +1,8 @@
 package com.example.weather.Model
 
+import android.os.Parcel
+import android.os.Parcelable
+
 data class HourlyWeather (
     var lat: Double,
     var lon: Double,
@@ -11,7 +14,7 @@ data class HourlyWeather (
     var daily: List<Daily>
 )
 
-data class Hour(
+data class Hour (
     var time: String,
     var icon: String,
     var temp: String

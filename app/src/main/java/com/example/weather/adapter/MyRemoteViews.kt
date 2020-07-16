@@ -1,7 +1,6 @@
 package com.example.weather.adapter
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import android.content.Context
@@ -13,6 +12,10 @@ import android.util.Log
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.Canvas
+import androidx.core.content.ContextCompat
 
 class MyRemoteViews : RemoteViewsService.RemoteViewsFactory {
 
@@ -56,20 +59,32 @@ class MyRemoteViews : RemoteViewsService.RemoteViewsFactory {
 //        listViewWidget.setImageViewUri(R.id.iconHourly2, Uri.parse(list[position].icon))
 //        listViewWidget.setTextViewText(R.id.iconHourly2, list[position].icon)
         //listViewWidget.setTextViewText(R.id.test, "test")
+        //context.getDrawable(context.resources, R.drawable.ic_wb_cloudy_black_24dp)
+        var drawable: Drawable? = null
+        var bitmap: Bitmap? = null
+
+
         if (list[position].icon == "Clear") {
-            icon = BitmapFactory.decodeResource(context.resources, R.drawable.ic_wb_sunny_black_24dp)
+            drawable = ContextCompat.getDrawable(context, R.drawable.ic_wb_sunny_black_24dp)
         }
         else if (list[position].icon == "Clouds") {
-            icon = BitmapFactory.decodeResource(context.resources, R.drawable.ic_wb_cloudy_black_24dp)
+            drawable = ContextCompat.getDrawable(context, R.drawable.ic_wb_cloudy_black_24dp)
         }
         else if (list[position].icon == "Rain") {
-            icon = BitmapFactory.decodeResource(context.resources, R.drawable.rain)
+            drawable = ContextCompat.getDrawable(context, R.drawable.rain)
+
         }
         else if (list[position].icon == "Haze") {
-            icon = BitmapFactory.decodeResource(context.resources, R.drawable.haze)
+            drawable = ContextCompat.getDrawable(context, R.drawable.haze)
         }
+        bitmap = Bitmap.createBitmap(drawable!!.intrinsicWidth, drawable!!.intrinsicHeight, Bitmap.Config.ARGB_8888)
 
-        listViewWidget.setImageViewBitmap(R.id.iconHourly2, icon)
+        var canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+        //bitmap = (drawable as BitmapDrawable).bitmap
+
+        listViewWidget.setImageViewBitmap(R.id.iconHourly2, bitmap)
         listViewWidget.setTextViewText(R.id.tempHourly2, list[position].temp)
 
         var intent = Intent()

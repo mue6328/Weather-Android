@@ -21,15 +21,16 @@ import retrofit2.Response
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 class MyRemoteViewsService : RemoteViewsService() {
     override fun onGetViewFactory(p0: Intent?): RemoteViewsFactory {
+        //Log.d("getview", "" + )
+
         var list = ArrayList<Hour>()
 
         try {
             val lm: LocationManager? =
-                this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                this!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
             var location: Location? = null
 
@@ -47,14 +48,14 @@ class MyRemoteViewsService : RemoteViewsService() {
             else {
                 location = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
 
-                var latitude = location.latitude
-                var longitude = location.longitude
+//                var latitude = location.latitude
+//                var longitude = location.longitude
 
 //                var latitude = 37.5010881
 //                var longitude = 127.0342169
 
-//                var longitude = 128.568975
-//                var latitude = 35.8438071
+                var longitude = 128.568975
+                var latitude = 35.8438071
 
                 WeatherService.getWeatherTime(
                     latitude,
@@ -96,13 +97,11 @@ class MyRemoteViewsService : RemoteViewsService() {
                                     }
                                 }
 
-                                list.add(Hour(dateFormat!!,
-                                    response.body()!!.hourly[i].weather[0].main,
-                                    (response.body()!!.hourly[i].temp - 273.15).toInt().toString() + "℃"))
-
-//                        hourlyWeatherList.add(Hour(dateFormat!!,
-//                            Utils.iconURL + response.body()!!.hourly[i].weather[0].icon + ".png",
-//                            (response.body()!!.hourly[i].temp - 273.15).toInt().toString() + "℃"))
+                                list.add(
+                                    Hour(dateFormat!!,
+                                        response.body()!!.hourly[i].weather[0].main,
+                                        (response.body()!!.hourly[i].temp - 273.15).toInt().toString() + "℃")
+                                )
                             }
                         }
                     })
@@ -110,12 +109,6 @@ class MyRemoteViewsService : RemoteViewsService() {
         } catch (e: Exception) {
 
         }
-//        list.add(Hour("3", "2", "3"))
-//        list.add(Hour("4", "2", "3"))
-//        list.add(Hour("5", "2", "3"))
-//        list.add(Hour("6", "2", "3"))
-//        list.add(Hour("7", "2", "3"))
-        //Activity().findViewById<>()
 
         return MyRemoteViews(this.applicationContext, list)
     }

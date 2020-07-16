@@ -91,11 +91,11 @@ class AlarmReceiver : BroadcastReceiver() {
             else {
                 location = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
 
-                var latitude = location.latitude
-                var longitude = location.longitude
+//                var latitude = location.latitude
+//                var longitude = location.longitude
 
-//                var longitude = 128.568975
-//                var latitude = 35.8438071
+                var longitude = 128.568975
+                var latitude = 35.8438071
 
             WeatherService.getWeather(latitude, longitude, Utils.API_KEY)
                 .enqueue(object : Callback<Weather> {

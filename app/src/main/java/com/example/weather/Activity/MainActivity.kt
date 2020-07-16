@@ -110,14 +110,14 @@ class MainActivity : AppCompatActivity() {
             else {
                 location = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
 
-                var latitude = location.latitude
-                var longitude = location.longitude
+//                var latitude = location.latitude
+//                var longitude = location.longitude
 
 //                var latitude = 37.5010881
 //                var longitude = 127.0342169
 
-//                var longitude = 128.568975
-//                var latitude = 35.8438071
+                var longitude = 128.568975
+                var latitude = 35.8438071
 
                 var geocoder = Geocoder(applicationContext, Locale.KOREA)
                 geocoder.getFromLocation(latitude,
