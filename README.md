@@ -1,3 +1,5 @@
 # Weather-Android
+날씨 정보 앱
 
-3학년 1학기 안드로이드 수업 시간에 개발함
+## 사용한 API
+https://openweathermap.org
